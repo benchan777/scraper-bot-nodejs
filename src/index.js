@@ -8,7 +8,7 @@ const helpers = require('../src/lib/helpers');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 
-let countryLoafStock = ' ';
+let countryLoafStock = 'N/A';
 let stopLoop = 'False';
 
 // Log bot into Discord
@@ -26,13 +26,15 @@ bot.on('message', async msg => {
                 break;
             }
             const stock = await scraper.countryLoafScraper(countryLoafStock);
+            const embed = await helpers.messageEmbed(stock)
+            msg.channel.send(embed)
             countryLoafStock = stock
-            msg.channel.send(stock)
-            await helpers.timer(5000)
+            await helpers.timer(60000)
         }
     }
 
     if (msg.content == '$stop') {
         countryLoafScraper = 'True'
+        msg.channel.send('Scraping terminated')
     }
 })

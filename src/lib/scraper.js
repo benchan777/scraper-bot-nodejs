@@ -1,6 +1,5 @@
 const axios = require('axios').default;
 const cheerio = require('cheerio');
-const helpers = require('./helpers');
 const url = 'https://guerrero.tartine.menu/pickup/'
 
 const countryLoafScraper = (countryLoafStock) => {
@@ -27,10 +26,13 @@ const countryLoafScraper = (countryLoafStock) => {
                 }
 
                 if (stockArray[29] != countryLoafStock) {
+                    console.log(countryLoafStock)
                     if (stockArray[29] == 'Available') {
-                        resolve(helpers.messageEmbed(stockArray[29]))
+                        // resolve(helpers.messageEmbed(stockArray[29]))
+                        resolve(stockArray[29])
                     } else if (stockArray[29] == 'Not Available') {
-                        resolve(helpers.messageEmbed(stockArray[29]))
+                        // resolve(helpers.messageEmbed(stockArray[29]))
+                        resolve(stockArray[29])
                     } else {
                         reject('Failed to scrape')
                     }
