@@ -18,23 +18,47 @@ bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`)
 });
 
-bot.on('message', async msg => {
-    if (msg.content == '$country_node') {
-        countryLoafScraper = 'False'
-        while (true) {
+bot.on('message', msg => {
+    if (msg.content == 'asdf') {
+        stopLoop = 'False';
+        
+        function runScraper() {
             if (stopLoop == 'True') {
-                break;
+                return
             }
-            const stock = await scraper.countryLoafScraper(countryLoafStock);
-            const embed = await helpers.messageEmbed(stock)
-            msg.channel.send(embed)
-            countryLoafStock = stock
-            await helpers.timer(60000)
+
+            return scraper.countryLoafScraper(countryLoafStock)
+            .then( stock => {
+                countryLoafStock = stock;
+                helpers.messageEmbed(stock)
+                .then( embed => {
+                    msg.channel.send(embed)
+                    .then( () => {
+                        helpers.timer(5000)
+                        .then( () => {
+                            runScraper();
+                        })
+                    })
+                })
+            })
         }
+
+        runScraper();
+
+        // while (true) {
+        //     if (stopLoop == 'True') {
+        //         break;
+        //     }
+        //     const stock = await scraper.countryLoafScraper(countryLoafStock);
+        //     const embed = await helpers.messageEmbed(stock)
+        //     msg.channel.send(embed)
+        //     countryLoafStock = stock
+        //     await helpers.timer(60000)  
+        // }
     }
 
     if (msg.content == '$stop') {
-        countryLoafScraper = 'True'
+        stopLoop = 'True'
         msg.channel.send('Scraping terminated')
     }
 })
