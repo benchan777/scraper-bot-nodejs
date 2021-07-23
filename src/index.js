@@ -9,7 +9,7 @@ const Discord = require('discord.js');
 const bot = new Discord.Client();
 
 let countryLoafStock = ' ';
-let stopLoop = 'True';
+let stopLoop = 'False';
 
 // Log bot into Discord
 bot.login(process.env.TOKEN);
