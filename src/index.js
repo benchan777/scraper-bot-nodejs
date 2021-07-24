@@ -6,6 +6,7 @@ const helpers = require('../src/lib/helpers');
 
 // Bot setup
 const Discord = require('discord.js');
+const { messageEmbed } = require('../src/lib/helpers');
 const bot = new Discord.Client();
 
 let countryLoafStock = 'N/A';
@@ -19,27 +20,31 @@ bot.on('ready', () => {
 });
 
 bot.on('message', msg => {
-    if (msg.content == 'asdf') {
+    if (msg.content == '!country') {
         stopLoop = 'False';
-        
+
         function runScraper() {
-            if (stopLoop == 'True') {
+            if (stopLoop == 'True') { // Stop loop if stop message detected
                 return
             }
 
             return scraper.countryLoafScraper(countryLoafStock)
-            .then( stock => {
+            .then( stock => { // Run scraper to get stock
                 countryLoafStock = stock;
                 helpers.messageEmbed(stock)
-                .then( embed => {
+                .then( embed => { // Create embed using stock status, then send message to channel
                     msg.channel.send(embed)
-                    .then( () => {
+                    .then( () => { // Delay before scraping again
                         helpers.timer(5000)
                         .then( () => {
                             runScraper();
                         })
                     })
                 })
+            })
+            .catch( error => {
+                console.log(error)
+                msg.channel.send('Error, something went wrong. Check logs for more details.')
             })
         }
 
@@ -57,7 +62,7 @@ bot.on('message', msg => {
         // }
     }
 
-    if (msg.content == '$stop') {
+    if (msg.content == '!stop') {
         stopLoop = 'True'
         msg.channel.send('Scraping terminated')
     }

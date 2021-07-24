@@ -1,5 +1,7 @@
+require('dotenv').config();
 const axios = require('axios').default;
 const cheerio = require('cheerio');
+const helpers = require('./helpers')
 const url = 'https://guerrero.tartine.menu/pickup/'
 
 /**
@@ -35,11 +37,24 @@ const countryLoafScraper = (countryLoafStock) => {
                 // If stock has changed, send notifications
                 if (stockArray[29] != countryLoafStock) {
                     if (stockArray[29] == 'Available') {
-                        // resolve(helpers.messageEmbed(stockArray[29]))
-                        console.log('changing status to Available')
+                        helpers.sendText(stockArray[29])
+                        .then( data => {
+                            resolve(stockArray[29])
+                            console.log(data)
+                            // axios.post(`https://maker.ifttt.com/trigger/available/with/key/${process.env.iftttKey}`)
+                        })
+                        .catch ( error => {
+                            reject(error)
+                        })
                     } else if (stockArray[29] == 'Not Available') {
-                        // resolve(helpers.messageEmbed(stockArray[29]))
-                        console.log('changing status to unavailable')
+                        helpers.sendText(stockArray[29])
+                        .then( data => {
+                            resolve(stockArray[29])
+                            console.log(data)
+                        })
+                        .catch ( error => {
+                            reject(error)
+                        })
                     } else {
                         reject('Failed to scrape')
                     }

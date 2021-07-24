@@ -1,3 +1,5 @@
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 const Discord = require('discord.js');
 
 // Timer for setting delay time between subsequent scraping sessions
@@ -31,7 +33,50 @@ const messageEmbed = (stock) => {
     })
 }
 
+const sendText = (availability) => {
+    return new Promise( (resolve, reject) => {
+        const authentication = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            auth: {
+                user: process.env.email,
+                pass: process.env.password
+            }
+        })
+
+        if (availability == 'Available') {
+            authentication.sendMail({
+                from: process.env.email,
+                to: process.env.receiverEmail,
+                subject: 'Country loaf in stock!',
+                text: `Country loaf is now in stock! Order here: https://guerrero.tartine.menu/pickup/`
+            })
+            .then( status => {
+                resolve(status)
+            })
+            .catch( error => {
+                reject(error.message)
+            })
+        } else {
+            authentication.sendMail({
+                from: process.env.email,
+                to: process.env.receiverEmail,
+                subject: 'Country loaf out of stock.',
+                text: `Country loaf is now out of stock. We will notify you when stock is replenished.`
+            })
+            .then( status => {
+                resolve(status)
+            })
+            .catch( error => {
+                reject(error.message)
+            })
+        }
+
+    })
+}
+
 module.exports = {
     timer: timer,
     messageEmbed: messageEmbed,
+    sendText: sendText,
 }
