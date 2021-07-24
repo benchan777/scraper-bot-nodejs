@@ -33,6 +33,11 @@ const messageEmbed = (stock) => {
     })
 }
 
+/**
+ * Sends an email to carrier gateway in order to send text message updates to specified phone number.
+ * @param {String} availability Availability status which determines which text message to send.
+ * @returns Doesn't return anything, just confirmation if email was successfully sent or not.
+ */
 const sendText = (availability) => {
     return new Promise( (resolve, reject) => {
         const authentication = nodemailer.createTransport({

@@ -44,7 +44,7 @@ const countryLoafScraper = (countryLoafStock) => {
                             // axios.post(`https://maker.ifttt.com/trigger/available/with/key/${process.env.iftttKey}`)
                         })
                         .catch ( error => {
-                            reject(error)
+                            reject(`Error at sendText: ${error}`)
                         })
                     } else if (stockArray[29] == 'Not Available') {
                         sendText(stockArray[29])
@@ -53,7 +53,7 @@ const countryLoafScraper = (countryLoafStock) => {
                             console.log(data)
                         })
                         .catch ( error => {
-                            reject(error)
+                            reject(`Error at sendText: ${error}`)
                         })
                     } else {
                         reject('Failed to scrape')
@@ -63,7 +63,7 @@ const countryLoafScraper = (countryLoafStock) => {
                 resolve(stockArray[29])
             })
             .catch(error => {
-                reject(error.message)
+                reject(`Error at axios: ${error.message}`)
             })
     })
 }
