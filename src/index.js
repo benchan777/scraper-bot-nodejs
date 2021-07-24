@@ -1,12 +1,11 @@
 require('dotenv').config();
 
 // Helper functions
-const scraper = require('../src/lib/scraper');
-const helpers = require('../src/lib/helpers');
+const { countryLoafScraper } = require('../src/lib/scraper');
+const { timer, messageEmbed } = require('../src/lib/helpers');
 
 // Bot setup
 const Discord = require('discord.js');
-const { messageEmbed } = require('../src/lib/helpers');
 const bot = new Discord.Client();
 
 let countryLoafStock = 'N/A';
@@ -28,14 +27,14 @@ bot.on('message', msg => {
                 return
             }
 
-            return scraper.countryLoafScraper(countryLoafStock)
+            return countryLoafScraper(countryLoafStock)
             .then( stock => { // Run scraper to get stock
                 countryLoafStock = stock;
-                helpers.messageEmbed(stock)
+                messageEmbed(stock)
                 .then( embed => { // Create embed using stock status, then send message to channel
                     msg.channel.send(embed)
                     .then( () => { // Delay 60s before scraping again
-                        helpers.timer(60000)
+                        timer(60000)
                         .then( () => {
                             runScraper();
                         })
