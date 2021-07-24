@@ -34,8 +34,8 @@ bot.on('message', msg => {
                 helpers.messageEmbed(stock)
                 .then( embed => { // Create embed using stock status, then send message to channel
                     msg.channel.send(embed)
-                    .then( () => { // Delay before scraping again
-                        helpers.timer(5000)
+                    .then( () => { // Delay 60s before scraping again
+                        helpers.timer(60000)
                         .then( () => {
                             runScraper();
                         })
