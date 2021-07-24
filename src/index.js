@@ -19,7 +19,12 @@ bot.on('ready', () => {
 });
 
 bot.on('message', msg => {
-    if (msg.content == '!country') {
+    if (!msg.content.startsWith('!') || msg.author.bot) return; // Ignore commands that don't start with '!'
+
+    const args = msg.content.slice(1).trim().split(' ');
+    const command = args.shift().toLowerCase();
+
+    if (command === 'country') {
         stopLoop = 'False';
 
         function runScraper() {
@@ -61,7 +66,7 @@ bot.on('message', msg => {
         // }
     }
 
-    if (msg.content == '!stop') {
+    if (command === 'stop') {
         stopLoop = 'True'
         msg.channel.send('Scraping terminated')
     }

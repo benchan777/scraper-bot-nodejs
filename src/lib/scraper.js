@@ -1,7 +1,7 @@
 require('dotenv').config();
 const axios = require('axios').default;
 const cheerio = require('cheerio');
-const helpers = require('./helpers')
+const { sendText } = require('./helpers')
 const url = 'https://guerrero.tartine.menu/pickup/'
 
 /**
@@ -37,7 +37,7 @@ const countryLoafScraper = (countryLoafStock) => {
                 // If stock has changed, send notifications
                 if (stockArray[29] != countryLoafStock) {
                     if (stockArray[29] == 'Available') {
-                        helpers.sendText(stockArray[29])
+                        sendText(stockArray[29])
                         .then( data => {
                             resolve(stockArray[29])
                             console.log(data)
@@ -47,7 +47,7 @@ const countryLoafScraper = (countryLoafStock) => {
                             reject(error)
                         })
                     } else if (stockArray[29] == 'Not Available') {
-                        helpers.sendText(stockArray[29])
+                        sendText(stockArray[29])
                         .then( data => {
                             resolve(stockArray[29])
                             console.log(data)
