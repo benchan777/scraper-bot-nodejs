@@ -35,21 +35,21 @@ const countryLoafScraper = (countryLoafStock) => {
 
                 // Checks current stock against stock from previous scrape
                 // If stock has changed, send notifications
-                if (stockArray[29] != countryLoafStock) {
-                    if (stockArray[29] == 'Available') {
-                        sendText(stockArray[29])
+                if (stockArray[78] != countryLoafStock) {
+                    if (stockArray[78] == 'Available') {
+                        sendText(stockArray[78])
                         .then( data => {
-                            resolve(stockArray[29])
+                            resolve(stockArray[78])
                             console.log(data)
                             // axios.post(`https://maker.ifttt.com/trigger/available/with/key/${process.env.iftttKey}`)
                         })
                         .catch ( error => {
                             reject(`Error at sendText: ${error}`)
                         })
-                    } else if (stockArray[29] == 'Not Available') {
-                        sendText(stockArray[29])
+                    } else if (stockArray[78] == 'Not Available') {
+                        sendText(stockArray[78])
                         .then( data => {
-                            resolve(stockArray[29])
+                            resolve(stockArray[78])
                             console.log(data)
                         })
                         .catch ( error => {
@@ -60,7 +60,7 @@ const countryLoafScraper = (countryLoafStock) => {
                     }
                 }
 
-                resolve(stockArray[29])
+                resolve(stockArray[78])
             })
             .catch(error => {
                 reject(`Error at axios: ${error.message}`)
