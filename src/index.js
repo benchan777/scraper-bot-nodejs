@@ -47,8 +47,9 @@ bot.on('message', msg => {
                 })
             })
             .catch( error => {
-                console.log(error)
+                console.log(`Error details: ${error}`)
                 msg.channel.send('Error, something went wrong. Check logs for more details.')
+                msg.channel.send(`Error details: ${error}`)
             })
         }
 
