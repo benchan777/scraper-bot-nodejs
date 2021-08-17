@@ -20,7 +20,12 @@ const countryLoafScraper = (countryLoafStock) => {
             let currentStock
             const $ = cheerio.load(response.data);
             const menuData = $.html().match(/menu_data = (.*);/)[1];
+
             const menuDataJson = JSON.parse(menuData)
+
+            // Check if item is located in fulfillable_menuitem_ids array. If not, item displays as out of stock even if stock says available
+            // const fulfillableMenuitemIds = menuDataJson.fulfillable_menuitem_ids
+            // console.log(fulfillableMenuitemIds.includes(process.env.itemId))
 
             // Checks if the item ID exists. If not, the ID of the item has probably changed and needs to be updated
             if (menuDataJson.menuItems[process.env.itemId]) {
