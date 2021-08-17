@@ -16,55 +16,51 @@ const countryLoafScraper = (countryLoafStock) => {
             method: 'get',
             url: url,
         })
-            .then(response => {
-                const $ = cheerio.load(response.data);
-                const data = $.html();
-                let tempString = ''
-                const stockArray = []
-                for (let i = 0; i < data.length; i ++) {
-                    tempString += data[i]
-                    if (tempString.includes('"in_stock": true') === true) {
-                        stockArray.push('Available')
-                        tempString = ''
-                    }
-                    if (tempString.includes('"in_stock": false') === true) {
-                        stockArray.push('Not Available')
-                        tempString = ''
-                    }
-                }
+        .then( response => {
+            let currentStock
+            const $ = cheerio.load(response.data);
+            const menuData = $.html().match(/menu_data = (.*);/)[1];
+            const menuDataJson = JSON.parse(menuData)
 
-                // Checks current stock against stock from previous scrape
-                // If stock has changed, send notifications
-                if (stockArray[78] != countryLoafStock) {
-                    if (stockArray[78] == 'Available') {
-                        sendText(stockArray[78])
-                        .then( data => {
-                            resolve(stockArray[78])
-                            console.log(data)
-                            // axios.post(`https://maker.ifttt.com/trigger/available/with/key/${process.env.iftttKey}`)
-                        })
-                        .catch ( error => {
-                            reject(`Error at sendText: ${error}`)
-                        })
-                    } else if (stockArray[78] == 'Not Available') {
-                        sendText(stockArray[78])
-                        .then( data => {
-                            resolve(stockArray[78])
-                            console.log(data)
-                        })
-                        .catch ( error => {
-                            reject(`Error at sendText: ${error}`)
-                        })
-                    } else {
-                        reject('Failed to scrape')
-                    }
+            // Checks if the item ID exists. If not, the ID of the item has probably changed and needs to be updated
+            if (menuDataJson.menuItems[process.env.itemId]) {
+                currentStock = menuDataJson.menuItems[process.env.itemId]['in_stock']
+            } else {
+                reject("Unable to find specified item ID. Item ID likely needs to be updated. Check Tartine's site for updated ID.")
+            }
+            
+            // Checks current stock against stock from previous scrape
+            // If stock has changed, send notifications
+            if (currentStock != countryLoafStock) {
+                if (currentStock == true) {
+                    sendText('Available')
+                    .then( data => {
+                        resolve(currentStock)
+                        console.log(data)
+                        // axios.post(`https://maker.ifttt.com/trigger/available/with/key/${process.env.iftttKey}`)
+                    })
+                    .catch( error => {
+                        reject(`Error at sendText: ${error}`)
+                    })
+                } else if (currentStock == false) {
+                    sendText('Unavailable')
+                    .then( data => {
+                        resolve(currentStock)
+                        console.log(data)
+                    })
+                    .catch( error => {
+                        reject(`Error at sendText: ${error}`)
+                    })
+                } else {
+                    reject("Unable to find specified item ID. Item ID likely needs to be updated. Check Tartine's site for updated ID.")
                 }
+            }
 
-                resolve(stockArray[78])
-            })
-            .catch(error => {
-                reject(`Error at axios: ${error.message}`)
-            })
+            resolve(currentStock)
+        })
+        .catch( error => {
+            reject(`Error at axios: ${error.message}`)
+        })
     })
 }
 
