@@ -8,6 +8,7 @@ const url = 'https://guerrero.tartine.menu/pickup/'
  * Scrapes Tartine's website to check for availability of Country Loaf.
  * Also takes in stock status from previous scrape. If there is a change, notifications will be sent.
  * @param {String} countryLoafStock Stock status from previous scrape (Available/Not Available)
+ * @param {String} fulfillable Fulfillability status from previous scrape
  * @returns Stoack status in string format. Either 'Available' or 'Not Available'
  */
 const countryLoafScraper = (countryLoafStock, fulfillable) => {
@@ -25,17 +26,17 @@ const countryLoafScraper = (countryLoafStock, fulfillable) => {
 
             const menuDataJson = JSON.parse(menuData)
 
-            // Fulfillable array determines if items display as in stock
-            // If an item is marked as in stock but isn't present in the array, it will still display as out of stock on website
-            const fulfillableMenuitemIds = menuDataJson.fulfillable_menuitem_ids
-            isFulfillable = fulfillableMenuitemIds.includes(process.env.itemId)
-
             // Checks if the item ID exists. If not, the ID of the item has probably changed and needs to be updated
             if (menuDataJson.menuItems[process.env.itemId]) {
                 currentStock = menuDataJson.menuItems[process.env.itemId]['in_stock']
             } else {
                 reject("Unable to find specified item ID. Item ID likely needs to be updated. Check Tartine's site for updated ID.")
             }
+
+            // Fulfillable array determines if items display as in stock
+            // If an item is marked as in stock but isn't present in the array, it will still display as out of stock on website
+            const fulfillableMenuitemIds = menuDataJson.fulfillable_menuitem_ids
+            isFulfillable = fulfillableMenuitemIds.includes(process.env.itemId)
             
             // Checks current stock against stock from previous scrape
             // If stock has changed, send notifications
@@ -52,16 +53,7 @@ const countryLoafScraper = (countryLoafStock, fulfillable) => {
                     .catch( error => {
                         reject(`Error at sendText: ${error}`)
                     })
-                } else if (isFulfillable == false) {
-                    sendText('Unavailable')
-                    .then( data => {
-                        resolve({ currentStock: currentStock, isFulfillable: isFulfillable})
-                        console.log(data)
-                    })
-                    .catch( error => {
-                        reject(`Error at sendText: ${error}`)
-                    })
-                } else if (currentStock == false) {
+                } else if (currentStock == false || isFulfillable == false) {
                     sendText('Unavailable')
                     .then( data => {
                         resolve({ currentStock: currentStock, isFulfillable: isFulfillable})
