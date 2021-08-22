@@ -9,6 +9,7 @@ const Discord = require('discord.js');
 const bot = new Discord.Client();
 
 let countryLoafStock = 'N/A';
+let isFulfillable = 'N/A';
 let stopLoop = 'False';
 
 // Log bot into Discord
@@ -32,9 +33,11 @@ bot.on('message', msg => {
                 return
             }
 
-            return countryLoafScraper(countryLoafStock)
+            return countryLoafScraper(countryLoafStock, isFulfillable)
             .then( stock => { // Run scraper to get stock
-                countryLoafStock = stock;
+                countryLoafStock = stock.currentStock;
+                isFulfillable = stock.isFulfillable;
+
                 messageEmbed(stock)
                 .then( embed => { // Create embed using stock status, then send message to channel
                     msg.channel.send(embed)
