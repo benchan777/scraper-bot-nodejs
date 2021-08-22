@@ -39,6 +39,8 @@ const countryLoafScraper = (countryLoafStock, fulfillable) => {
             
             // Checks current stock against stock from previous scrape
             // If stock has changed, send notifications
+            // Also check fulfillability status from previous scrape
+            // If changed, that also indicates a stock change, so send notification
             if (currentStock != countryLoafStock || fulfillable != isFulfillable) {
                 if (currentStock == true && isFulfillable == true) {
                     sendText('Available')
