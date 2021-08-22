@@ -27,6 +27,7 @@ bot.on('message', msg => {
 
     if (command === 'country') {
         stopLoop = 'False';
+        let stockStatus;
 
         function runScraper() {
             if (stopLoop == 'True') { // Stop loop if stop message detected
@@ -38,7 +39,13 @@ bot.on('message', msg => {
                 countryLoafStock = stock.currentStock;
                 isFulfillable = stock.isFulfillable;
 
-                messageEmbed(stock)
+                if (stock.currentStock == false || stock.isFulfillable == false) {
+                    stockStatus = false
+                } else {
+                    stockStatus = true
+                }
+
+                messageEmbed(stockStatus)
                 .then( embed => { // Create embed using stock status, then send message to channel
                     msg.channel.send(embed)
                     .then( () => { // Delay 60s before scraping again
